@@ -22,13 +22,14 @@ def z_score_normalization(x, y):
         totalx += (x[i] - meanx)**2
     for i in range(len(y)):
         totaly += (y[i] - meany	)**2
+    SST = totaly
     deviationx = math.sqrt(totalx / len(x))
     deviationy = math.sqrt(totaly / len(y))
 
     z_score_x = (x - meanx) /  deviationx
     z_score_y = (y - meany) / deviationy
 
-    return (z_score_x, z_score_y, meany, deviationy, meanx, deviationx)
+    return (z_score_x, z_score_y, meany, deviationy, meanx, deviationx, SST)
 
 # Gradient is weight, bias is intercept
 def gradient_descent(x, y, iterations=1000, learning_rate=0.01, stopping_threshold = 1e-6):
@@ -95,7 +96,7 @@ def main():
     # X = np.array(myData.price)
     # Y = np.array(myData.km)
 
-    z_score_x, z_score_y, meany, deviationy, meanx, deviationx = z_score_normalization(X, Y)
+    z_score_x, z_score_y, meany, deviationy, meanx, deviationx, SST = z_score_normalization(X, Y)
     estimated_weight, estimated_bias = gradient_descent(z_score_x, z_score_y)
     print(f"Estimated Weight: {estimated_weight}\nEstimated Bias: {estimated_bias}")
 
@@ -129,7 +130,12 @@ def main():
     plt.ylabel("Price")
     plt.show()
 
-    # R-Squared
+    # R-Squared: 1-(SSR/SST)
+    SSR = 0
+    for i in range(len(Y)):
+        SSR += (Y[i] - Y_pred[i])**2
+    print("MY R2 SCORE IS", 1 - (SSR/SST))
+
 
 if __name__ == "__main__":
 	main()
